@@ -14,7 +14,7 @@ int main() {
         printf("3 - Modifier la luminosite (+/-)\n");
         printf("4 - Appliquer un seuillage (threshold)\n");
         printf("5 - Sauvegarder sous 'resultat.bmp'\n");
-        printf("6 - Appliquer un filtre avancé\n");
+        printf("6 - Appliquer un filtre avance\n");
         printf("0 - Quitter\n");
         printf("Votre choix : ");
         scanf("%d", &choix);
