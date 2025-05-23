@@ -29,3 +29,10 @@ void bmp8_applyFilter(t_bmp8 *img, float **kernel, int kernelSize);
 #endif
 
 
+float **createBoxBlurKernel();
+float **createGaussianBlurKernel();
+float **createOutlineKernel();
+float **createEmbossKernel();
+float **createSharpenKernel();
+void freeKernel(float **kernel);
+

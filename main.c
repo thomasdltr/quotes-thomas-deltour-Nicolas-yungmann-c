@@ -14,6 +14,7 @@ int main() {
         printf("3 - Modifier la luminosite (+/-)\n");
         printf("4 - Appliquer un seuillage (threshold)\n");
         printf("5 - Sauvegarder sous 'resultat.bmp'\n");
+        printf("6 - Appliquer un filtre avancé\n");
         printf("0 - Quitter\n");
         printf("Votre choix : ");
         scanf("%d", &choix);
@@ -46,6 +47,27 @@ int main() {
             case 5:
                 bmp8_saveImage("resultat.bmp", img);
             break;
+
+            case 6:
+                printf("Choisissez un filtre :\n");
+            printf("1 - Box Blur\n2 - Gaussian Blur\n3 - Outline\n4 - Emboss\n5 - Sharpen\nVotre choix : ");
+            int f;
+            scanf("%d", &f);
+            float **kernel = NULL;
+            switch (f) {
+                case 1: kernel = createBoxBlurKernel(); break;
+                case 2: kernel = createGaussianBlurKernel(); break;
+                case 3: kernel = createOutlineKernel(); break;
+                case 4: kernel = createEmbossKernel(); break;
+                case 5: kernel = createSharpenKernel(); break;
+                default: printf("Choix invalide.\n"); break;
+            }
+            if (kernel) {
+                bmp8_applyFilter(img, kernel, 3);
+                freeKernel(kernel);
+            }
+            break;
+
 
             case 0:
                 printf("Fermeture du programme.\n");
