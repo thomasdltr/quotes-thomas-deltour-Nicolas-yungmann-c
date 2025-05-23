@@ -3,15 +3,15 @@
 #include "bmp8.h"
 
 int main() {
-    t_bmp8 *img = bmp8_loadImage("barbara_gray.bmp");
+    t_bmp8 *img = bmp8_loadImage("C:/Users/thoma/CLionProjects/quotes-thomas-deltour-Nicolas-yungmann-c/barbara_gray.bmp");
     if (!img) return 1;
 
     int choix;
     do {
         printf("\n--- MENU TRAITEMENT IMAGE ---\n");
         printf("1 - Afficher les infos\n");
-        printf("2 - Appliquer un négatif\n");
-        printf("3 - Modifier la luminosité (+/-)\n");
+        printf("2 - Appliquer un negatif\n");
+        printf("3 - Modifier la luminosite (+/-)\n");
         printf("4 - Appliquer un seuillage (threshold)\n");
         printf("5 - Sauvegarder sous 'resultat.bmp'\n");
         printf("0 - Quitter\n");
