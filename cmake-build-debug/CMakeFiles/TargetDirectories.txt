@@ -1,0 +1,3 @@
+C:/Users/thoma/CLionProjects/quotes-thomas-deltour-Nicolas-yungmann-c/cmake-build-debug/CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir
+C:/Users/thoma/CLionProjects/quotes-thomas-deltour-Nicolas-yungmann-c/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/thoma/CLionProjects/quotes-thomas-deltour-Nicolas-yungmann-c/cmake-build-debug/CMakeFiles/rebuild_cache.dir

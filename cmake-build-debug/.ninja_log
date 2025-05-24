@@ -1,0 +1,9 @@
+# ninja log v6
+28	846	7697918637818459	build.ninja	4bf084ad97d17732
+6	3254	7697880554671437	CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/main.c.obj	1bb5bf65040a4eb6
+39	1221	7697348367403616	CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/bmp8.c.obj	21ae76f624c8c2f6
+3255	5153	7697880587131937	quotes_thomas_deltour_Nicolas_yungmann_c.exe	cd08fb49fd83bcae
+18	1234	7697918637818459	build.ninja	4bf084ad97d17732
+4	896	7697918638196605	CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/main.c.obj	1bb5bf65040a4eb6
+8	1188	7697918638236448	CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/bmp24.c.obj	bf95266ac9dbd810
+4	826	7697920276389771	CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/main.c.obj	1bb5bf65040a4eb6
