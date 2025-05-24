@@ -92,6 +92,8 @@ t_bmp24 *bmp24_loadImage(const char *filename) {
 
     // Lire les données (avec fonctions demandées)
     bmp24_readPixelData(img, file);
+    printf("Bits detectes : %d\n", bits);
+
 
     fclose(file);
     return img;
@@ -108,13 +110,18 @@ void bmp24_readPixelValue(t_bmp24 *image, int x, int y, FILE *file) {
 }
 
 void bmp24_readPixelData(t_bmp24 *image, FILE *file) {
+    int padding = (4 - (image->width * 3) % 4) % 4;
+
     fseek(file, image->header.offset, SEEK_SET);
     for (int y = image->height - 1; y >= 0; y--) {
         for (int x = 0; x < image->width; x++) {
             bmp24_readPixelValue(image, x, y, file);
         }
+        fseek(file, padding, SEEK_CUR);  // sauter les octets de padding à chaque ligne
     }
 }
+
+
 
 void bmp24_writePixelValue(t_bmp24 *image, int x, int y, FILE *file) {
     uint8_t bgr[3];
@@ -125,13 +132,21 @@ void bmp24_writePixelValue(t_bmp24 *image, int x, int y, FILE *file) {
 }
 
 void bmp24_writePixelData(t_bmp24 *image, FILE *file) {
+    int padding = (4 - (image->width * 3) % 4) % 4;
+    uint8_t pad[3] = {0, 0, 0};
+
     fseek(file, image->header.offset, SEEK_SET);
+
     for (int y = image->height - 1; y >= 0; y--) {
         for (int x = 0; x < image->width; x++) {
             bmp24_writePixelValue(image, x, y, file);
         }
+        fwrite(pad, 1, padding, file);  // écrire les octets de padding à la fin de chaque ligne
     }
 }
+
+
+
 
 
 
