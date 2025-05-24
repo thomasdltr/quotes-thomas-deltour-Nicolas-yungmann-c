@@ -7,4 +7,5 @@ add_executable(quotes_thomas_deltour_Nicolas_yungmann_c
         main.c
         bmp8.c
         bmp24.c
+        filtres.c
 )

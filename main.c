@@ -4,18 +4,18 @@
 #include "bmp24.h"
 
 void menu_bmp8() {
-    t_bmp8 *img = bmp8_loadImage("barbara_gray.bmp");
+    t_bmp8 *img = bmp8_loadImage("C:/Users/thoma/CLionProjects/quotes-thomas-deltour-Nicolas-yungmann-c/barbara_gray.bmp");
     if (!img) return;
 
     int choix;
     do {
         printf("\n--- MENU BMP 8 BITS ---\n");
         printf("1 - Afficher les infos\n");
-        printf("2 - Négatif\n");
-        printf("3 - Modifier la luminosité\n");
+        printf("2 - Negatif\n");
+        printf("3 - Modifier la luminosite\n");
         printf("4 - Seuillage\n");
         printf("5 - Sauvegarder sous 'resultat.bmp'\n");
-        printf("6 - Filtres avancés (convolution)\n");
+        printf("6 - Filtres avances (convolution)\n");
         printf("0 - Quitter\n");
         printf("Votre choix : ");
         scanf("%d", &choix);
@@ -25,7 +25,7 @@ void menu_bmp8() {
             case 2: bmp8_negative(img); break;
             case 3: {
                 int value;
-                printf("Valeur de luminosité : ");
+                printf("Valeur de luminosite : ");
                 scanf("%d", &value);
                 bmp8_brightness(img, value);
                 break;
@@ -65,20 +65,20 @@ void menu_bmp8() {
 }
 
 void menu_bmp24() {
-    t_bmp24 *img = bmp24_loadImage("flowers_color.bmp");
+    t_bmp24 *img = bmp24_loadImage("C:/Users/thoma/CLionProjects/quotes-thomas-deltour-Nicolas-yungmann-c/flowers_color.bmp");
     if (!img) return;
 
     int choix;
     do {
         printf("\n--- MENU BMP 24 BITS ---\n");
-        printf("1 - Négatif\n");
+        printf("1 - Negatif\n");
         printf("2 - Niveaux de gris\n");
-        printf("3 - Modifier la luminosité\n");
+        printf("3 - Modifier la luminosite\n");
         printf("4 - Box blur\n");
         printf("5 - Gaussian blur\n");
         printf("6 - Contours\n");
         printf("7 - Relief\n");
-        printf("8 - Netteté\n");
+        printf("8 - Nettete\n");
         printf("9 - Sauvegarder sous 'resultat.bmp'\n");
         printf("0 - Quitter\n");
         printf("Votre choix : ");
@@ -89,7 +89,7 @@ void menu_bmp24() {
             case 2: bmp24_grayscale(img); break;
             case 3: {
                 int value;
-                printf("Valeur de luminosité : ");
+                printf("Valeur de luminosite : ");
                 scanf("%d", &value);
                 bmp24_brightness(img, value);
                 break;

@@ -67,6 +67,12 @@ build CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/bmp24.c.obj: C_COM
   OBJECT_DIR = CMakeFiles\quotes_thomas_deltour_Nicolas_yungmann_c.dir
   OBJECT_FILE_DIR = CMakeFiles\quotes_thomas_deltour_Nicolas_yungmann_c.dir
 
+build CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/filtres.c.obj: C_COMPILER__quotes_thomas_deltour_Nicolas_yungmann_c_unscanned_Debug C$:/Users/thoma/CLionProjects/quotes-thomas-deltour-Nicolas-yungmann-c/filtres.c || cmake_object_order_depends_target_quotes_thomas_deltour_Nicolas_yungmann_c
+  DEP_FILE = CMakeFiles\quotes_thomas_deltour_Nicolas_yungmann_c.dir\filtres.c.obj.d
+  FLAGS = -g -std=gnu11 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\quotes_thomas_deltour_Nicolas_yungmann_c.dir
+  OBJECT_FILE_DIR = CMakeFiles\quotes_thomas_deltour_Nicolas_yungmann_c.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target quotes_thomas_deltour_Nicolas_yungmann_c
@@ -75,7 +81,7 @@ build CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/bmp24.c.obj: C_COM
 #############################################
 # Link the executable quotes_thomas_deltour_Nicolas_yungmann_c.exe
 
-build quotes_thomas_deltour_Nicolas_yungmann_c.exe: C_EXECUTABLE_LINKER__quotes_thomas_deltour_Nicolas_yungmann_c_Debug CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/main.c.obj CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/bmp8.c.obj CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/bmp24.c.obj
+build quotes_thomas_deltour_Nicolas_yungmann_c.exe: C_EXECUTABLE_LINKER__quotes_thomas_deltour_Nicolas_yungmann_c_Debug CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/main.c.obj CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/bmp8.c.obj CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/bmp24.c.obj CMakeFiles/quotes_thomas_deltour_Nicolas_yungmann_c.dir/filtres.c.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\quotes_thomas_deltour_Nicolas_yungmann_c.dir

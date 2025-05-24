@@ -1,5 +1,6 @@
 #include "bmp24.h"
 #include <stdlib.h>
+#include "filtres.h"
 
 
 void file_rawRead(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file) {
@@ -246,42 +247,13 @@ void bmp24_boxBlur(t_bmp24 *img) {
     freeKernel(kernel);
 }
 
-float **createBoxBlurKernel() {
-    float **kernel = malloc(3 * sizeof(float *));
-    for (int i = 0; i < 3; i++) {
-        kernel[i] = malloc(3 * sizeof(float));
-        for (int j = 0; j < 3; j++) {
-            kernel[i][j] = 1.0f / 9.0f;
-        }
-    }
-    return kernel;
-}
-
-void freeKernel(float **kernel) {
-    for (int i = 0; i < 3; i++) {
-        free(kernel[i]);
-    }
-    free(kernel);
-}
 
 
 
-float **createGaussianBlurKernel() {
-    float values[3][3] = {
-        {1, 2, 1},
-        {2, 4, 2},
-        {1, 2, 1}
-    };
 
-    float **kernel = malloc(3 * sizeof(float *));
-    for (int i = 0; i < 3; i++) {
-        kernel[i] = malloc(3 * sizeof(float));
-        for (int j = 0; j < 3; j++) {
-            kernel[i][j] = values[i][j] / 16.0f;
-        }
-    }
-    return kernel;
-}
+
+
+
 
 void bmp24_gaussianBlur(t_bmp24 *img) {
     float **kernel = createGaussianBlurKernel();
@@ -309,22 +281,7 @@ void bmp24_gaussianBlur(t_bmp24 *img) {
 
 
 
-float **createOutlineKernel() {
-    int values[3][3] = {
-        {-1, -1, -1},
-        {-1,  8, -1},
-        {-1, -1, -1}
-    };
 
-    float **kernel = malloc(3 * sizeof(float *));
-    for (int i = 0; i < 3; i++) {
-        kernel[i] = malloc(3 * sizeof(float));
-        for (int j = 0; j < 3; j++) {
-            kernel[i][j] = (float)values[i][j];
-        }
-    }
-    return kernel;
-}
 
 void bmp24_outline(t_bmp24 *img) {
     float **kernel = createOutlineKernel();
@@ -352,22 +309,6 @@ void bmp24_outline(t_bmp24 *img) {
 
 
 
-float **createEmbossKernel() {
-    int values[3][3] = {
-        {-2, -1, 0},
-        {-1,  1, 1},
-        { 0,  1, 2}
-    };
-
-    float **kernel = malloc(3 * sizeof(float *));
-    for (int i = 0; i < 3; i++) {
-        kernel[i] = malloc(3 * sizeof(float));
-        for (int j = 0; j < 3; j++) {
-            kernel[i][j] = (float)values[i][j];
-        }
-    }
-    return kernel;
-}
 
 void bmp24_emboss(t_bmp24 *img) {
     float **kernel = createEmbossKernel();
@@ -394,22 +335,6 @@ void bmp24_emboss(t_bmp24 *img) {
 }
 
 
-float **createSharpenKernel() {
-    int values[3][3] = {
-        { 0, -1,  0},
-        {-1,  5, -1},
-        { 0, -1,  0}
-    };
-
-    float **kernel = malloc(3 * sizeof(float *));
-    for (int i = 0; i < 3; i++) {
-        kernel[i] = malloc(3 * sizeof(float));
-        for (int j = 0; j < 3; j++) {
-            kernel[i][j] = (float)values[i][j];
-        }
-    }
-    return kernel;
-}
 
 void bmp24_sharpen(t_bmp24 *img) {
     float **kernel = createSharpenKernel();
@@ -434,6 +359,7 @@ void bmp24_sharpen(t_bmp24 *img) {
     bmp24_free(tmp);
     freeKernel(kernel);
 }
+
 
 
 
