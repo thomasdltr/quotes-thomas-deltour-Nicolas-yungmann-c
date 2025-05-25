@@ -2,14 +2,21 @@
 #include <stdlib.h>
 #include "filtres.h"
 
-
+/*
+Fonction utilitaire pour lire des données brutes depuis un fichier
+- Se positionne à l'offset donné
+- Lit n éléments de taille size dans le buffer
+*/
 void file_rawRead(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file) {
     fseek(file, position, SEEK_SET);
     fread(buffer, size, n, file);
 }
 
-
-
+/*
+Alloue la mémoire pour une matrice de pixels
+- Crée un tableau 2D de t_pixel
+- Gère les erreurs d'allocation
+*/
 t_pixel **bmp24_allocateDataPixels(int width, int height) {
     t_pixel **pixels = malloc(height * sizeof(t_pixel *));
     if (!pixels) return NULL;
@@ -25,6 +32,9 @@ t_pixel **bmp24_allocateDataPixels(int width, int height) {
     return pixels;
 }
 
+/*
+Libère la mémoire d'une matrice de pixels
+*/
 void bmp24_freeDataPixels(t_pixel **pixels, int height) {
     if (!pixels) return;
     for (int i = 0; i < height; i++) {
@@ -33,6 +43,11 @@ void bmp24_freeDataPixels(t_pixel **pixels, int height) {
     free(pixels);
 }
 
+/*
+Alloue une structure t_bmp24 complète
+- Initialise les dimensions et la profondeur de couleur
+- Alloue la matrice de pixels
+*/
 t_bmp24 *bmp24_allocate(int width, int height, int colorDepth) {
     t_bmp24 *img = malloc(sizeof(t_bmp24));
     if (!img) return NULL;
@@ -48,15 +63,20 @@ t_bmp24 *bmp24_allocate(int width, int height, int colorDepth) {
     return img;
 }
 
+/*
+Libère toute la mémoire d'une image BMP 24 bits
+*/
 void bmp24_free(t_bmp24 *img) {
     if (!img) return;
     bmp24_freeDataPixels(img->data, img->height);
     free(img);
 }
 
-
-
-
+/*
+Charge une image BMP 24 bits depuis un fichier
+- Vérifie que la profondeur est bien 24 bits
+- Lit les en-têtes et les données
+*/
 t_bmp24 *bmp24_loadImage(const char *filename) {
     FILE *file = fopen(filename, "rb");
     if (!file) {
@@ -94,13 +114,15 @@ t_bmp24 *bmp24_loadImage(const char *filename) {
     bmp24_readPixelData(img, file);
     printf("Bits detectes : %d\n", bits);
 
-
     fclose(file);
     return img;
 }
 
-
-
+/*
+Lit la valeur d'un pixel spécifique depuis un fichier
+- Lit les 3 composantes BGR
+- Stocke dans la structure t_pixel (RGB)
+*/
 void bmp24_readPixelValue(t_bmp24 *image, int x, int y, FILE *file) {
     uint8_t bgr[3];
     fread(bgr, sizeof(uint8_t), 3, file);
@@ -109,6 +131,11 @@ void bmp24_readPixelValue(t_bmp24 *image, int x, int y, FILE *file) {
     image->data[y][x].red   = bgr[2];
 }
 
+/*
+Lit toutes les données pixels d'une image BMP 24 bits
+- Gère le padding des lignes (multiple de 4 octets)
+- Lit de bas en haut (format BMP)
+*/
 void bmp24_readPixelData(t_bmp24 *image, FILE *file) {
     int padding = (4 - (image->width * 3) % 4) % 4;
 
@@ -121,8 +148,10 @@ void bmp24_readPixelData(t_bmp24 *image, FILE *file) {
     }
 }
 
-
-
+/*
+Écrit la valeur d'un pixel spécifique dans un fichier
+- Convertit de RGB à BGR (format BMP)
+*/
 void bmp24_writePixelValue(t_bmp24 *image, int x, int y, FILE *file) {
     uint8_t bgr[3];
     bgr[0] = image->data[y][x].blue;
@@ -131,6 +160,11 @@ void bmp24_writePixelValue(t_bmp24 *image, int x, int y, FILE *file) {
     fwrite(bgr, sizeof(uint8_t), 3, file);
 }
 
+/*
+Écrit toutes les données pixels d'une image BMP 24 bits
+- Ajoute le padding nécessaire pour les lignes
+- Écrit de bas en haut (format BMP)
+*/
 void bmp24_writePixelData(t_bmp24 *image, FILE *file) {
     int padding = (4 - (image->width * 3) % 4) % 4;
     uint8_t pad[3] = {0, 0, 0};
@@ -145,21 +179,22 @@ void bmp24_writePixelData(t_bmp24 *image, FILE *file) {
     }
 }
 
-
-
-
-
-
+/*
+Fonction utilitaire pour écrire des données brutes dans un fichier
+*/
 void file_rawWrite(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file) {
     fseek(file, position, SEEK_SET);
     fwrite(buffer, size, n, file);
 }
 
-
+/*
+Sauvegarde une image BMP 24 bits dans un fichier
+- Écrit les en-têtes puis les données pixels
+*/
 void bmp24_saveImage(t_bmp24 *img, const char *filename) {
     FILE *file = fopen(filename, "wb");
     if (!file) {
-        printf("Erreur : impossible d’ouvrir le fichier %s en ecriture\n", filename);
+        printf("Erreur : impossible d'ouvrir le fichier %s en ecriture\n", filename);
         return;
     }
 
@@ -174,6 +209,10 @@ void bmp24_saveImage(t_bmp24 *img, const char *filename) {
     printf("Image sauvegardee dans %s\n", filename);
 }
 
+/*
+Applique un effet négatif à une image couleur
+- Inverse chaque composante RGB (255 - valeur)
+*/
 void bmp24_negative(t_bmp24 *img) {
     for (int y = 0; y < img->height; y++) {
         for (int x = 0; x < img->width; x++) {
@@ -184,7 +223,10 @@ void bmp24_negative(t_bmp24 *img) {
     }
 }
 
-
+/*
+Convertit une image couleur en niveaux de gris
+- Moyenne des 3 composantes RGB pour chaque pixel
+*/
 void bmp24_grayscale(t_bmp24 *img) {
     for (int y = 0; y < img->height; y++) {
         for (int x = 0; x < img->width; x++) {
@@ -197,7 +239,11 @@ void bmp24_grayscale(t_bmp24 *img) {
     }
 }
 
-
+/*
+Ajuste la luminosité d'une image couleur
+- Ajoute une valeur à chaque composante RGB
+- Clampe les valeurs entre 0 et 255
+*/
 void bmp24_brightness(t_bmp24 *img, int value) {
     for (int y = 0; y < img->height; y++) {
         for (int x = 0; x < img->width; x++) {
@@ -211,9 +257,11 @@ void bmp24_brightness(t_bmp24 *img, int value) {
     }
 }
 
-
-
-
+/*
+Applique une convolution à un pixel spécifique
+- Utilise un noyau de convolution donné
+- Gère les bords de l'image
+*/
 t_pixel bmp24_convolution(t_bmp24 *img, int x, int y, float **kernel, int kernelSize) {
     int offset = kernelSize / 2;
     float r = 0.0, g = 0.0, b = 0.0;
@@ -239,7 +287,11 @@ t_pixel bmp24_convolution(t_bmp24 *img, int x, int y, float **kernel, int kernel
     return result;
 }
 
-
+/*
+Applique un filtre box blur à l'image
+- Crée un noyau de flou moyen
+- Applique la convolution à toute l'image
+*/
 void bmp24_boxBlur(t_bmp24 *img) {
     float **kernel = createBoxBlurKernel();
     t_bmp24 *tmp = bmp24_allocate(img->width, img->height, img->colorDepth);
@@ -251,7 +303,7 @@ void bmp24_boxBlur(t_bmp24 *img) {
         }
     }
 
-    // recopier dans l’image originale
+    // recopier dans l'image originale
     for (int y = 0; y < img->height; y++) {
         for (int x = 0; x < img->width; x++) {
             img->data[y][x] = tmp->data[y][x];
@@ -262,14 +314,11 @@ void bmp24_boxBlur(t_bmp24 *img) {
     freeKernel(kernel);
 }
 
-
-
-
-
-
-
-
-
+/*
+Applique un filtre gaussien à l'image
+- Crée un noyau gaussien 3x3
+- Applique la convolution à toute l'image
+*/
 void bmp24_gaussianBlur(t_bmp24 *img) {
     float **kernel = createGaussianBlurKernel();
     t_bmp24 *tmp = bmp24_allocate(img->width, img->height, img->colorDepth);
@@ -294,10 +343,11 @@ void bmp24_gaussianBlur(t_bmp24 *img) {
     freeKernel(kernel);
 }
 
-
-
-
-
+/*
+Applique un filtre de détection de contours
+- Crée un noyau spécifique
+- Applique la convolution à toute l'image
+*/
 void bmp24_outline(t_bmp24 *img) {
     float **kernel = createOutlineKernel();
     t_bmp24 *tmp = bmp24_allocate(img->width, img->height, img->colorDepth);
@@ -322,9 +372,11 @@ void bmp24_outline(t_bmp24 *img) {
     freeKernel(kernel);
 }
 
-
-
-
+/*
+Applique un filtre de relief (emboss)
+- Crée un noyau spécifique
+- Applique la convolution à toute l'image
+*/
 void bmp24_emboss(t_bmp24 *img) {
     float **kernel = createEmbossKernel();
     t_bmp24 *tmp = bmp24_allocate(img->width, img->height, img->colorDepth);
@@ -349,8 +401,11 @@ void bmp24_emboss(t_bmp24 *img) {
     freeKernel(kernel);
 }
 
-
-
+/*
+Applique un filtre de netteté (sharpen)
+- Crée un noyau spécifique
+- Applique la convolution à toute l'image
+*/
 void bmp24_sharpen(t_bmp24 *img) {
     float **kernel = createSharpenKernel();
     t_bmp24 *tmp = bmp24_allocate(img->width, img->height, img->colorDepth);
@@ -375,11 +430,14 @@ void bmp24_sharpen(t_bmp24 *img) {
     freeKernel(kernel);
 }
 
-
-
-
 #include <math.h> // pour round()
 
+/*
+Applique l'égalisation d'histogramme à une image couleur
+- Convertit en espace YUV
+- Égalise la composante Y (luminance)
+- Reconversion en RGB
+*/
 void bmp24_equalize(t_bmp24 *img) {
     if (!img || !img->data) return;
 
@@ -481,10 +539,3 @@ void bmp24_equalize(t_bmp24 *img) {
 
     printf("Egalisation YUV terminee pour image couleur \n");
 }
-
-
-
-
-
-
-
