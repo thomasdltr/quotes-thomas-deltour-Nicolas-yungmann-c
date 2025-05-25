@@ -38,5 +38,5 @@ Répartition des tâches
         Menu principal 24 bits
 
 Bugs connus
-    Problème d'affichage avec certaines images 24 bits après traitement (en cours de correction)
+    Problème d'affichage avec certaines images 24 bits après traitement
     Gestion des bords dans les filtres de convolution peut être améliorée
