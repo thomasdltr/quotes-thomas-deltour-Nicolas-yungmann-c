@@ -3,8 +3,13 @@
 #include "bmp8.h"
 #include "bmp24.h"
 
+/*
+Menu principal pour les images 8 bits (niveaux de gris)
+- Affiche les options disponibles
+- Appelle les fonctions correspondantes
+*/
 void menu_bmp8() {
-    t_bmp8 *img = bmp8_loadImage("C:/Users/thoma/CLionProjects/quotes-thomas-deltour-Nicolas-yungmann-c/barbara_gray.bmp");
+    t_bmp8 *img = bmp8_loadImage("../barbara_gray.bmp");
     if (!img) return;
 
     int choix;
@@ -74,8 +79,13 @@ void menu_bmp8() {
     bmp8_free(img);
 }
 
+/*
+Menu principal pour les images 24 bits (couleur)
+- Affiche les options disponibles
+- Appelle les fonctions correspondantes
+*/
 void menu_bmp24() {
-    t_bmp24 *img = bmp24_loadImage("C:/Users/thoma/CLionProjects/quotes-thomas-deltour-Nicolas-yungmann-c/flowers_color.bmp");
+    t_bmp24 *img = bmp24_loadImage("../flowers_color.bmp");
     if (!img) return;
 
     int choix;
@@ -120,6 +130,11 @@ void menu_bmp24() {
     bmp24_free(img);
 }
 
+/*
+Fonction principale
+- Affiche le menu de sélection du type d'image
+- Lance le menu correspondant
+*/
 int main() {
     int mode = 0;
     printf("=== MENU DE LANCEMENT ===\n");
@@ -138,4 +153,3 @@ int main() {
 
     return 0;
 }
-
