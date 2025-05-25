@@ -1,10 +1,16 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "bmp8.h"
 #include "filtres.h"
 
-
+/*
+Fonction pour charger une image BMP 8 bits (niveaux de gris)
+- Ouvre le fichier et vérifie son existence
+- Lit l'en-tête et la table des couleurs
+- Alloue la mémoire pour l'image
+- Vérifie que la profondeur est bien 8 bits
+- Lit les données des pixels
+*/
 t_bmp8* bmp8_loadImage(const char *filename) {
     FILE *file = fopen(filename, "rb");
     if (!file) {
@@ -48,17 +54,18 @@ t_bmp8* bmp8_loadImage(const char *filename) {
         return NULL;
     }
 
-    // Lire les données de l’image
+    // Lire les données de l'image
     fread(image->data, sizeof(unsigned char), image->dataSize, file);
 
     fclose(file);
     return image;
 }
 
-
-
-
-
+/*
+Sauvegarde une image BMP 8 bits
+- Ouvre le fichier en écriture
+- Écrit l'en-tête, la table des couleurs et les données
+*/
 void bmp8_saveImage(const char *filename, t_bmp8 *img) {
     if (!img) {
         printf("Erreur : image invalide (NULL)\n");
@@ -96,10 +103,9 @@ void bmp8_saveImage(const char *filename, t_bmp8 *img) {
     printf("Image sauvegardee dans %s \n", filename);
 }
 
-
-
-
-
+/*
+Libère la mémoire allouée pour une image BMP 8 bits
+*/
 void bmp8_free(t_bmp8 *img) {
     if (img != NULL) {
         if (img->data != NULL) {
@@ -109,8 +115,9 @@ void bmp8_free(t_bmp8 *img) {
     }
 }
 
-
-
+/*
+Affiche les informations de base d'une image BMP 8 bits
+*/
 void bmp8_printInfo(t_bmp8 *img) {
     if (img == NULL) {
         printf("Image invalide.\n");
@@ -124,9 +131,10 @@ void bmp8_printInfo(t_bmp8 *img) {
     printf("Data Size: %u\n", img->dataSize);
 }
 
-
-
-
+/*
+- Applique un effet négatif à l'image
+- Inverse chaque valeur de pixel (255 - valeur)
+*/
 void bmp8_negative(t_bmp8 *img) {
     if (img == NULL || img->data == NULL) {
         printf("Erreur : image invalide pour bmp8_negative.\n");
@@ -140,17 +148,16 @@ void bmp8_negative(t_bmp8 *img) {
     printf("Effet negatif applique \n");
 }
 
-
-
- void bmp8_brightness(t_bmp8 *img, int value) {
+/*
+Ajuste la luminosité de l'image
+- Ajoute une valeur à chaque pixel
+- Clampe les valeurs entre 0 et 255
+*/
+void bmp8_brightness(t_bmp8 *img, int value) {
     if (img == NULL || img->data == NULL) {
         printf("Erreur : image invalide pour bmp8_brightness.\n");
         return;
     }
-
-
-
-
 
     for (unsigned int i = 0; i < img->dataSize; i++) {
         int pixel = img->data[i] + value;
@@ -164,9 +171,11 @@ void bmp8_negative(t_bmp8 *img) {
     printf("Luminosite ajustee (value = %d) \n", value);
 }
 
-
-
-
+/*
+Applique un seuillage à l'image
+- Met à 255 les pixels >= seuil
+- Met à 0 les autres
+*/
 void bmp8_threshold(t_bmp8 *img, int threshold) {
     if (img == NULL || img->data == NULL) {
         printf("Erreur : image invalide pour bmp8_threshold.\n");
@@ -180,8 +189,12 @@ void bmp8_threshold(t_bmp8 *img, int threshold) {
     printf("Seuil applique (threshold = %d) \n", threshold);
 }
 
-
-
+/*
+Applique un filtre de convolution à l'image
+- Crée une copie des données pour éviter les effets de bord
+- Applique le noyau de convolution à chaque pixel
+- Clampe les valeurs entre 0 et 255
+*/
 void bmp8_applyFilter(t_bmp8 *img, float **kernel, int kernelSize) {
     if (img == NULL || img->data == NULL) {
         printf("Erreur : image invalide pour bmp8_applyFilter.\n");
@@ -226,9 +239,12 @@ void bmp8_applyFilter(t_bmp8 *img, float **kernel, int kernelSize) {
     printf("Filtre applique  (kernelSize = %d)\n", kernelSize);
 }
 
-
 #include <math.h>  // pour round()
 
+/*
+Calcule l'histogramme d'une image 8 bits
+- Compte le nombre de pixels pour chaque niveau de gris (0-255)
+*/
 unsigned int *bmp8_computeHistogram(t_bmp8 *img) {
     if (!img || !img->data) return NULL;
 
@@ -245,7 +261,10 @@ unsigned int *bmp8_computeHistogram(t_bmp8 *img) {
     return hist;
 }
 
-
+/*
+Calcule la CDF (fonction de répartition cumulée) d'un histogramme
+- Normalise les valeurs pour l'égalisation d'histogramme
+*/
 unsigned int *bmp8_computeCDF(unsigned int *hist, unsigned int dataSize) {
     if (!hist) return NULL;
 
@@ -279,7 +298,10 @@ unsigned int *bmp8_computeCDF(unsigned int *hist, unsigned int dataSize) {
     return cdf;
 }
 
-
+/*
+Applique l'égalisation d'histogramme à une image
+- Utilise la CDF normalisée pour redistribuer les niveaux de gris
+*/
 void bmp8_equalize(t_bmp8 *img, unsigned int *hist_eq) {
     if (!img || !img->data || !hist_eq) return;
 
@@ -289,8 +311,3 @@ void bmp8_equalize(t_bmp8 *img, unsigned int *hist_eq) {
 
     printf("Egalisation d histogramme appliquee\n");
 }
-
-
-
-
-
