@@ -16,6 +16,7 @@ void menu_bmp8() {
         printf("4 - Seuillage\n");
         printf("5 - Sauvegarder sous 'resultat.bmp'\n");
         printf("6 - Filtres avances (convolution)\n");
+        printf("7 - Egalisation d histogramme\n");
         printf("0 - Quitter\n");
         printf("Votre choix : ");
         scanf("%d", &choix);
@@ -56,9 +57,18 @@ void menu_bmp8() {
                 }
                 break;
             }
+            case 7: {
+                unsigned int *hist = bmp8_computeHistogram(img);
+                unsigned int *cdf = bmp8_computeCDF(hist, img->dataSize);
+                bmp8_equalize(img, cdf);
+                free(hist);
+                free(cdf);
+                break;
+            }
             case 0: break;
             default: printf("Choix invalide.\n"); break;
         }
+
     } while (choix != 0);
 
     bmp8_free(img);
@@ -80,6 +90,7 @@ void menu_bmp24() {
         printf("7 - Relief\n");
         printf("8 - Nettete\n");
         printf("9 - Sauvegarder sous 'resultat.bmp'\n");
+        printf("10 - Egalisation histogramme (YUV)\n");
         printf("0 - Quitter\n");
         printf("Votre choix : ");
         scanf("%d", &choix);
@@ -100,6 +111,7 @@ void menu_bmp24() {
             case 7: bmp24_emboss(img); break;
             case 8: bmp24_sharpen(img); break;
             case 9: bmp24_saveImage(img, "resultat.bmp"); break;
+            case 10: bmp24_equalize(img); break;
             case 0: break;
             default: printf("Choix invalide.\n"); break;
         }
@@ -126,9 +138,4 @@ int main() {
 
     return 0;
 }
-
-
-
-
-
 

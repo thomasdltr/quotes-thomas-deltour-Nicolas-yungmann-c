@@ -14,7 +14,7 @@ t_bmp8* bmp8_loadImage(const char *filename) {
 
     t_bmp8 *image = (t_bmp8 *)malloc(sizeof(t_bmp8));
     if (!image) {
-        printf("Erreur : échec de l’allocation mémoire\n");
+        printf("Erreur : echec de l allocation memoire\n");
         fclose(file);
         return NULL;
     }
@@ -42,7 +42,7 @@ t_bmp8* bmp8_loadImage(const char *filename) {
     // Allocation mémoire pour les pixels
     image->data = (unsigned char *)malloc(image->dataSize);
     if (!image->data) {
-        printf("Erreur : échec allocation mémoire des pixels\n");
+        printf("Erreur : echec allocation memoire des pixels\n");
         free(image);
         fclose(file);
         return NULL;
@@ -67,33 +67,33 @@ void bmp8_saveImage(const char *filename, t_bmp8 *img) {
 
     FILE *file = fopen(filename, "wb");
     if (!file) {
-        printf("Erreur : impossible d’ouvrir le fichier %s en écriture\n", filename);
+        printf("Erreur : impossible d ouvrir le fichier %s en ecriture\n", filename);
         return;
     }
 
     // Écrire le header (54 octets)
     if (fwrite(img->header, sizeof(unsigned char), 54, file) != 54) {
-        printf("Erreur lors de l’écriture du header\n");
+        printf("Erreur lors de l ecriture du header\n");
         fclose(file);
         return;
     }
 
     // Écrire la table des couleurs (1024 octets)
     if (fwrite(img->colorTable, sizeof(unsigned char), 1024, file) != 1024) {
-        printf("Erreur lors de l’écriture de la table de couleurs\n");
+        printf("Erreur lors de l ecriture de la table de couleurs\n");
         fclose(file);
         return;
     }
 
     // Écrire les données image (pixels)
     if (fwrite(img->data, sizeof(unsigned char), img->dataSize, file) != img->dataSize) {
-        printf("Erreur lors de l’écriture des pixels\n");
+        printf("Erreur lors de l ecriture des pixels\n");
         fclose(file);
         return;
     }
 
     fclose(file);
-    printf("Image sauvegardée dans %s ✅\n", filename);
+    printf("Image sauvegardee dans %s \n", filename);
 }
 
 
@@ -137,7 +137,7 @@ void bmp8_negative(t_bmp8 *img) {
         img->data[i] = 255 - img->data[i];  // Inversion du pixel
     }
 
-    printf("Effet négatif appliqué ✅\n");
+    printf("Effet negatif applique \n");
 }
 
 
@@ -161,7 +161,7 @@ void bmp8_negative(t_bmp8 *img) {
         img->data[i] = (unsigned char)pixel;
     }
 
-    printf("Luminosité ajustée (value = %d) ✅\n", value);
+    printf("Luminosite ajustee (value = %d) \n", value);
 }
 
 
@@ -177,7 +177,7 @@ void bmp8_threshold(t_bmp8 *img, int threshold) {
         img->data[i] = (img->data[i] >= threshold) ? 255 : 0;
     }
 
-    printf("Seuil appliqué (threshold = %d) ✅\n", threshold);
+    printf("Seuil applique (threshold = %d) \n", threshold);
 }
 
 
@@ -226,6 +226,69 @@ void bmp8_applyFilter(t_bmp8 *img, float **kernel, int kernelSize) {
     printf("Filtre applique  (kernelSize = %d)\n", kernelSize);
 }
 
+
+#include <math.h>  // pour round()
+
+unsigned int *bmp8_computeHistogram(t_bmp8 *img) {
+    if (!img || !img->data) return NULL;
+
+    unsigned int *hist = calloc(256, sizeof(unsigned int));
+    if (!hist) {
+        printf("Erreur allocation histogramme\n");
+        return NULL;
+    }
+
+    for (unsigned int i = 0; i < img->dataSize; i++) {
+        hist[img->data[i]]++;
+    }
+
+    return hist;
+}
+
+
+unsigned int *bmp8_computeCDF(unsigned int *hist, unsigned int dataSize) {
+    if (!hist) return NULL;
+
+    unsigned int *cdf = malloc(256 * sizeof(unsigned int));
+    if (!cdf) {
+        printf("Erreur allocation CDF\n");
+        return NULL;
+    }
+
+    // Étape 1 : CDF brute
+    unsigned int cum = 0;
+    for (int i = 0; i < 256; i++) {
+        cum += hist[i];
+        cdf[i] = cum;
+    }
+
+    // Étape 2 : chercher le plus petit cdf non nul
+    unsigned int cdf_min = 0;
+    for (int i = 0; i < 256; i++) {
+        if (cdf[i] != 0) {
+            cdf_min = cdf[i];
+            break;
+        }
+    }
+
+    // Étape 3 : normalisation
+    for (int i = 0; i < 256; i++) {
+        cdf[i] = round(((float)(cdf[i] - cdf_min) / (dataSize - cdf_min)) * 255);
+    }
+
+    return cdf;
+}
+
+
+void bmp8_equalize(t_bmp8 *img, unsigned int *hist_eq) {
+    if (!img || !img->data || !hist_eq) return;
+
+    for (unsigned int i = 0; i < img->dataSize; i++) {
+        img->data[i] = (unsigned char)hist_eq[img->data[i]];
+    }
+
+    printf("Egalisation d histogramme appliquee\n");
+}
 
 
 

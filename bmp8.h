@@ -36,3 +36,9 @@ float **createEmbossKernel();
 float **createSharpenKernel();
 void freeKernel(float **kernel);
 
+// Égalisation d’histogramme
+unsigned int *bmp8_computeHistogram(t_bmp8 *img);
+unsigned int *bmp8_computeCDF(unsigned int *hist, unsigned int dataSize);
+void bmp8_equalize(t_bmp8 *img, unsigned int *hist_eq);
+
+

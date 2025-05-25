@@ -108,6 +108,9 @@ void bmp24_sharpen(t_bmp24 *img);
 float **createSharpenKernel();
 
 
+void bmp24_equalize(t_bmp24 *img);
+
+
 #endif
 
 

@@ -60,7 +60,7 @@ void bmp24_free(t_bmp24 *img) {
 t_bmp24 *bmp24_loadImage(const char *filename) {
     FILE *file = fopen(filename, "rb");
     if (!file) {
-        printf("Erreur : impossible d’ouvrir le fichier %s\n", filename);
+        printf("Erreur : impossible d ouvrir le fichier %s\n", filename);
         return NULL;
     }
 
@@ -74,7 +74,7 @@ t_bmp24 *bmp24_loadImage(const char *filename) {
     fread(&bits, sizeof(uint16_t), 1, file);
 
     if (bits != 24) {
-        printf("Erreur : image non 24 bits (%d bits détectés)\n", bits);
+        printf("Erreur : image non 24 bits (%d bits detectes)\n", bits);
         fclose(file);
         return NULL;
     }
@@ -159,7 +159,7 @@ void file_rawWrite(uint32_t position, void *buffer, uint32_t size, size_t n, FIL
 void bmp24_saveImage(t_bmp24 *img, const char *filename) {
     FILE *file = fopen(filename, "wb");
     if (!file) {
-        printf("Erreur : impossible d’ouvrir le fichier %s en écriture\n", filename);
+        printf("Erreur : impossible d’ouvrir le fichier %s en ecriture\n", filename);
         return;
     }
 
@@ -171,7 +171,7 @@ void bmp24_saveImage(t_bmp24 *img, const char *filename) {
     bmp24_writePixelData(img, file);
 
     fclose(file);
-    printf("Image sauvegardée dans %s\n", filename);
+    printf("Image sauvegardee dans %s\n", filename);
 }
 
 void bmp24_negative(t_bmp24 *img) {
@@ -375,6 +375,112 @@ void bmp24_sharpen(t_bmp24 *img) {
     freeKernel(kernel);
 }
 
+
+
+
+#include <math.h> // pour round()
+
+void bmp24_equalize(t_bmp24 *img) {
+    if (!img || !img->data) return;
+
+    int width = img->width;
+    int height = img->height;
+
+    // Étapes 1-2 : allouer des tableaux pour Y, U, V
+    float **Y = malloc(height * sizeof(float *));
+    float **U = malloc(height * sizeof(float *));
+    float **V = malloc(height * sizeof(float *));
+    for (int i = 0; i < height; i++) {
+        Y[i] = malloc(width * sizeof(float));
+        U[i] = malloc(width * sizeof(float));
+        V[i] = malloc(width * sizeof(float));
+    }
+
+    // Étape 3 : convertir RGB → YUV et remplir les matrices
+    unsigned int *hist = calloc(256, sizeof(unsigned int));
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            t_pixel p = img->data[i][j];
+
+            float r = (float)p.red;
+            float g = (float)p.green;
+            float b = (float)p.blue;
+
+            float y = 0.299 * r + 0.587 * g + 0.114 * b;
+            float u = -0.14713 * r - 0.28886 * g + 0.436 * b;
+            float v =  0.615 * r - 0.51499 * g - 0.10001 * b;
+
+            // clamp y entre 0 et 255 avant histogramme
+            int y_int = (int)round(y);
+            if (y_int < 0) y_int = 0;
+            if (y_int > 255) y_int = 255;
+
+            hist[y_int]++;
+
+            Y[i][j] = y;
+            U[i][j] = u;
+            V[i][j] = v;
+        }
+    }
+
+    // Étape 4 : CDF et normalisation
+    unsigned int *cdf = malloc(256 * sizeof(unsigned int));
+    unsigned int total = width * height;
+    unsigned int cum = 0;
+    for (int i = 0; i < 256; i++) {
+        cum += hist[i];
+        cdf[i] = cum;
+    }
+
+    // chercher le cdf_min ≠ 0
+    unsigned int cdf_min = 0;
+    for (int i = 0; i < 256; i++) {
+        if (cdf[i] > 0) {
+            cdf_min = cdf[i];
+            break;
+        }
+    }
+
+    // hist_eq = tableau de correspondance
+    unsigned char hist_eq[256];
+    for (int i = 0; i < 256; i++) {
+        hist_eq[i] = (unsigned char)round(((float)(cdf[i] - cdf_min) / (total - cdf_min)) * 255);
+    }
+
+    // Étape 5-6 : appliquer égalisation sur Y, puis reconvertir en RGB
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            int y_new = hist_eq[(int)round(Y[i][j])];
+            float u = U[i][j];
+            float v = V[i][j];
+
+            // YUV → RGB
+            int r = (int)round(y_new + 1.13983 * v);
+            int g = (int)round(y_new - 0.39465 * u - 0.58060 * v);
+            int b = (int)round(y_new + 2.03211 * u);
+
+            // Clamp entre 0-255
+            if (r < 0) r = 0; if (r > 255) r = 255;
+            if (g < 0) g = 0; if (g > 255) g = 255;
+            if (b < 0) b = 0; if (b > 255) b = 255;
+
+            img->data[i][j].red = (unsigned char)r;
+            img->data[i][j].green = (unsigned char)g;
+            img->data[i][j].blue = (unsigned char)b;
+        }
+    }
+
+    // Nettoyage mémoire
+    for (int i = 0; i < height; i++) {
+        free(Y[i]);
+        free(U[i]);
+        free(V[i]);
+    }
+    free(Y); free(U); free(V);
+    free(hist); free(cdf);
+
+    printf("Egalisation YUV terminee pour image couleur \n");
+}
 
 
 
